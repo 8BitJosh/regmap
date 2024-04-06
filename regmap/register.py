@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import warnings
 from dataclasses import dataclass
 from enum import Enum
 from threading import Lock
@@ -101,7 +102,7 @@ class Register:
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         try:
             if self._state.mode == Mode.RO:
-                print("Warning")
+                warnings.warn("Attempted to modify register in read only mode")
             else:
                 self._write()
         finally:

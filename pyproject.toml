@@ -20,6 +20,12 @@ build-backend = "setuptools.build_meta"
 [tool.setuptools_scm]
 version_file = "regmap/_version.py"
 
+[project.optional-dependencies]
+dev = [
+    "ruff >=0.3.0,<0.4",
+    "build",
+]
+
 ### Linting Rules ###
 [tool.ruff]
 line-length = 120
