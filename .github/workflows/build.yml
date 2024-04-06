@@ -22,6 +22,9 @@ jobs:
     - name: Lint
       run: |
         ruff check regmap
+    - name: Test
+      run: |
+        pytest tests
 
   build:
     permissions:

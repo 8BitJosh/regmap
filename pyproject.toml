@@ -22,8 +22,9 @@ version_file = "regmap/_version.py"
 
 [project.optional-dependencies]
 dev = [
-    "ruff >=0.3.0,<0.4",
     "build",
+    "pytest",
+    "ruff >=0.3.0,<0.4",
 ]
 
 ### Linting Rules ###
