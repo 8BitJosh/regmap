@@ -1,6 +1,6 @@
 [project]
 name = "regmap"
-description = ""
+description = "A lightweight library to manage direct register field manipulation."
 readme = "README.md"
 license = {file = "LICENSE"}
 
