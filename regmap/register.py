@@ -78,31 +78,34 @@ class Register:
         # Write the value stored in the register back to the interface
         self._interface.write(self._address, self._value)
 
-    def __call__(self, *, mode: Mode) -> Register:
+    def _obtain_lock(self) -> None:
         self._lock.acquire()
+        self._state = State()
+
+    def _release_lock(self) -> None:
+        self._state = State
+        self._lock.release()
+
+    def __call__(self, *, mode: Mode) -> Register:
+        self._obtain_lock()
+
         self._state.from_call = True
         self._state.mode = mode
 
         return self
 
-    def _cleanup_state(self) -> None:
-        self._state = State()
-        self._lock.release()
-
     def __enter__(self) -> Register:
         if self._state.from_call is False:
-            self._lock.acquire()
+            self._obtain_lock()
 
-        if self._state.mode == Mode.WO:
-            self._value = 0
-        else:
+        self._value = 0
+
+        if self._state.mode != Mode.WO:
             try:
                 self._read()
             except Exception:
-                self._cleanup_state()
+                self._release_lock()
                 raise
-
-        self._state.modified = False
 
         return self
 
@@ -114,7 +117,7 @@ class Register:
                 else:
                     self._write()
         finally:
-            self._cleanup_state()
+            self._release_lock()
 
     def __str__(self) -> str:
         spacer = len(self._name) * " "
