@@ -49,6 +49,13 @@ class Register:
         bitfields.sort(key=lambda b: b.msb, reverse=True)
         return bitfields
 
+    def __getattribute__(self, name: str) -> Any:
+        attr = super().__getattribute__(name)
+        if isinstance(attr, BitField):
+            return (self._value & attr.mask) >> attr.lsb
+
+        return attr
+
     def __setattr__(self, name: str, value: Any) -> None:
         if name in ("_value", "_interface", "_state", "_lock"):
             return super().__setattr__(name, value)
@@ -101,10 +108,11 @@ class Register:
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         try:
-            if self._state.mode == Mode.RO:
-                warnings.warn("Attempted to modify register in read only mode")
-            else:
-                self._write()
+            if self._state.modified:
+                if self._state.mode == Mode.RO:
+                    warnings.warn("Attempted to modify register in read only mode")
+                else:
+                    self._write()
         finally:
             self._cleanup_state()
 
