@@ -1,45 +1,16 @@
-# regmap
-
-regmap is a lightweight library to manage direct register field manipulation.
-
-Many times been in the situation where for development I have wanted to interact with an embedded system, where for testing I just want read and write raw register values.
-Most of these devices contain registers with multiple fields of varying bit lengths.
-This library abstracts away the awkward bit manipulation into a simple register definition.
-
-## Installation
-
-You can install regmap from PyPi with the following command:
-
-```bash
-pip install regmap
-```
-
-## Usage
-
-### Define an interface
-
-The interface is the code that interacts with the system containing the registers.
-A read and a write method need to be defined.
-
-```python
-from regmap import Interface
+from regmap import Interface, Mode
+from regmap import BitField, Register
 
 
 class DeviceInterface(Interface):
     def read(self, address: int) -> int:
         # Function to go read a register from the device
-        value = read_val_from_register(address)
-        return value
+        print(f"Reading value from register at address {address}")
+        return 0
 
     def write(self, address: int, value: int) -> None:
         # Function to go write a value to a register on the device
-        write_val_to_register(address, value)
-```
-
-### Define our registers
-
-```python
-from regmap import BitField, Register
+        print(f"Writing value {value} to register at address {address}")
 
 
 class config_reg_a_def(Register):
@@ -63,16 +34,6 @@ class Registers:
     def __init__(self, interface):
         self.config_reg_a = config_reg_a_def(interface)
         self.config_reg_b = config_reg_b_def(interface)
-```
-
-### Set some values
-
-The context manager will deal with reading and writing to the register.
-By default the context manager will do read, modify, write.
-This can be changed to perform read-only or write-only operations.
-
-```python
-from regmap import Mode
 
 
 interface = DeviceInterface()
@@ -90,4 +51,3 @@ with registers.config_reg_a(mode=Mode.RO):
 # Perform write only, zeros will be written in any unset fields
 with registers.config_reg_b(mode=Mode.WO):
     registers.config_reg_b.setting1 = 2
-```
