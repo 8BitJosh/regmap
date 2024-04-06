@@ -1,17 +1,9 @@
+from typing import Protocol
 
 
-class Interface:
-    def read(self, address):
-        raise NotImplementedError("write function not implimented")
+class Interface(Protocol):
+    def read(self, address: int) -> int:
+        ...
 
-    def write(self, address, value):
-        raise NotImplementedError("read function not implimented")
-
-
-class NullInterface(Interface):
-    def read(self, address):
-        print("NullInterface - read")
-        return 0
-
-    def write(self, address, value):
-        print(f"NullInterface - write {address} {value}")
+    def write(self, address: int, value: int):
+        ...

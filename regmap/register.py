@@ -5,8 +5,8 @@ from enum import Enum
 from threading import Lock
 from typing import Any
 
-from bitfield import BitField
-from interface import Interface
+from .bitfield import BitField
+from .interface import Interface
 
 
 class Mode(Enum):

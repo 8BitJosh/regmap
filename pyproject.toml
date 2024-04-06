@@ -1,0 +1,35 @@
+[project]
+name = "regmap"
+description = ""
+readme = "README.md"
+license = {file = "LICENSE"}
+
+dynamic = ["version"]
+requires-python = ">=3.8"
+
+[project.urls]
+Repository = "https://github.com/8BitJosh/regmap"
+
+[tool.setuptools.packages]
+find = {}
+
+[build-system]
+requires = ["setuptools>=60", "wheel", "setuptools_scm>=8"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools_scm]
+version_file = "regmap/_version.py"
+
+### Linting Rules ###
+[tool.ruff]
+line-length = 120
+lint.select = [
+    # "D",   # pydocstyle
+    "E",   # pycodestyle error
+    "F",   # pyflakes
+    "I",   # isort
+    "Q",   # flake8-quotes
+    "RUF", # ruff-specific
+    "W",   # pycodestyle warning
+]
+preview = true
