@@ -1,5 +1,4 @@
-from regmap import Interface, Mode
-from regmap import BitField, Register
+from regmap import BitField, Interface, Mode, Register
 
 
 class DeviceInterface(Interface):
