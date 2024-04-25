@@ -23,7 +23,7 @@ class BitField:
 
     def _check_size(self, value) -> None:
         # Value setter, checks the size of the value fits in this bitfield
-        max_value = 2 ** self.num_bits
+        max_value = (2 ** self.num_bits) - 1
 
         if (value < 0) or (value > max_value):
             raise ValueError(f"Value provided ({value}) is too large to fit in {self.num_bits} bit")
