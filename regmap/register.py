@@ -20,7 +20,6 @@ class Mode(Enum):
 class State:
     from_call: bool = False
     mode: Mode = Mode.RMW
-    modified: bool = False
 
 
 class Register:
@@ -42,7 +41,7 @@ class Register:
     def _bitfields(self) -> list[BitField]:
         # Get a list of the bitfield objects in the register object
         bitfields = []
-        for name, item in self.__dict__.items():
+        for _, item in self.__dict__.items():
             if isinstance(item, BitField):
                 bitfields.append(item)
 
@@ -66,9 +65,11 @@ class Register:
                 raise TypeError("Can only set value of bitfield to int")
 
             attr._check_size(value)
-
             self._value = (self._value & ~attr.mask) | (value << attr.lsb)
-            self._state.modified = True
+
+            # Can just warn about this beacuse we dont do a write if mode=RO
+            if self._state.mode == Mode.RO:
+                warnings.warn("Attempted to modify register in read only mode")
 
     def _read(self) -> None:
         # Update the value stored in the register from the interface
@@ -100,7 +101,7 @@ class Register:
 
         self._value = 0
 
-        if self._state.mode != Mode.WO:
+        if self._state.mode in [Mode.RO, Mode.RMW]:
             try:
                 self._read()
             except Exception:
@@ -111,11 +112,8 @@ class Register:
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         try:
-            if self._state.modified:
-                if self._state.mode == Mode.RO:
-                    warnings.warn("Attempted to modify register in read only mode")
-                else:
-                    self._write()
+            if self._state.mode in [Mode.WO, Mode.RMW]:
+                self._write()
         finally:
             self._release_lock()
 

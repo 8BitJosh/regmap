@@ -34,8 +34,8 @@ def test_register_rmw_read():
         assert register.field3 == 0b000
         assert register.field1 == 0b1
 
-    # Check we didnt write as no modifications were made
-    assert interface.written_val is None
+    # Check written value is same as start value
+    assert interface.written_val == 0b1111_000_1
 
 
 def test_register_rmw_write():
@@ -66,8 +66,8 @@ def test_register_wo_blank():
         assert register.field3 == 0b000
         assert register.field1 == 0b0
 
-    # Check we didnt write as no modifications occured
-    assert interface.written_val is None
+    # Check we wrote zero as this is default if no modifications occured in RO
+    assert interface.written_val == 0
 
 
 def test_register_wo_values():
@@ -103,7 +103,23 @@ def test_register_ro_write_warn():
     # Check we warn if we try to write in read only
     with pytest.warns(UserWarning):
         with register(mode=Mode.RO):
+            assert register.field4 == 0b1111
+            assert register.field3 == 0b000
+            assert register.field1 == 0b1
+            
             register.field1 = 0
 
-    # Check we didnt write
+    # Check we didnt write a value
     assert interface.written_val is None
+
+
+def test_register_write_full():
+    interface = DeviceInterface(0b1111_000_1)
+    register = test_reg(interface)
+
+    # write the whole reg to zero
+    with register:
+        register._value = 0
+
+    # Check we wrote the correct value
+    assert interface.written_val == 0
