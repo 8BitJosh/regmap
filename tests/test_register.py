@@ -1,6 +1,6 @@
 import pytest
 
-from regmap import BitField, Interface, RegMode, Register
+from regmap import BitField, Interface, Register, RegMode
 
 
 class DeviceInterface(Interface):
@@ -106,7 +106,7 @@ def test_register_ro_write_warn():
             assert register.field4 == 0b1111
             assert register.field3 == 0b000
             assert register.field1 == 0b1
-            
+
             register.field1 = 0
 
     # Check we didnt write a value

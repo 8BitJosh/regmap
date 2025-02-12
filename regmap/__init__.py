@@ -1,6 +1,6 @@
 from .bitfield import BitField
 from .interface import Interface
-from .register import RegMode, Register
+from .register import Register, RegMode
 
 __all__ = [
     "BitField",
