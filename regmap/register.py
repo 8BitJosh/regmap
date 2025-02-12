@@ -10,7 +10,7 @@ from .bitfield import BitField
 from .interface import Interface
 
 
-class Mode(Enum):
+class RegMode(Enum):
     RO = "RO"
     WO = "WO"
     RMW = "RMW"
@@ -19,7 +19,7 @@ class Mode(Enum):
 @dataclass
 class State:
     from_call: bool = False
-    mode: Mode = Mode.RMW
+    mode: RegMode = RegMode.RMW
 
 
 class Register:
@@ -68,7 +68,7 @@ class Register:
             self._value = (self._value & ~attr.mask) | (value << attr.lsb)
 
             # Can just warn about this beacuse we dont do a write if mode=RO
-            if self._state.mode == Mode.RO:
+            if self._state.mode == RegMode.RO:
                 warnings.warn("Attempted to modify register in read only mode")
 
     def _read(self) -> None:
@@ -87,7 +87,7 @@ class Register:
         self._state = State
         self._lock.release()
 
-    def __call__(self, *, mode: Mode) -> Register:
+    def __call__(self, *, mode: RegMode) -> Register:
         self._obtain_lock()
 
         self._state.from_call = True
@@ -101,7 +101,7 @@ class Register:
 
         self._value = 0
 
-        if self._state.mode in [Mode.RO, Mode.RMW]:
+        if self._state.mode in [RegMode.RO, RegMode.RMW]:
             try:
                 self._read()
             except Exception:
@@ -112,7 +112,7 @@ class Register:
 
     def __exit__(self, exc_type, exc_value, traceback) -> None:
         try:
-            if self._state.mode in [Mode.WO, Mode.RMW]:
+            if self._state.mode in [RegMode.WO, RegMode.RMW]:
                 self._write()
         finally:
             self._release_lock()

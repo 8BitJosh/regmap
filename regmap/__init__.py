@@ -1,10 +1,10 @@
 from .bitfield import BitField
 from .interface import Interface
-from .register import Mode, Register
+from .register import RegMode, Register
 
 __all__ = [
     "BitField",
     "Interface",
-    "Mode",
+    "RegMode",
     "Register",
 ]

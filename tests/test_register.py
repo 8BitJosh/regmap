@@ -1,6 +1,6 @@
 import pytest
 
-from regmap import BitField, Interface, Mode, Register
+from regmap import BitField, Interface, RegMode, Register
 
 
 class DeviceInterface(Interface):
@@ -60,7 +60,7 @@ def test_register_wo_blank():
     register = test_reg(interface)
 
     # Check vals are all 0 in write only mode
-    with register(mode=Mode.WO):
+    with register(mode=RegMode.WO):
         assert register._value == 0
         assert register.field4 == 0b0000
         assert register.field3 == 0b000
@@ -75,7 +75,7 @@ def test_register_wo_values():
     register = test_reg(interface)
 
     # Check vals are all 0 in write only mode
-    with register(mode=Mode.WO):
+    with register(mode=RegMode.WO):
         register.field1 = 1
 
     # Check we only wrote back the things we set
@@ -87,7 +87,7 @@ def test_register_ro():
     register = test_reg(interface)
 
     # Check we read ok
-    with register(mode=Mode.RO):
+    with register(mode=RegMode.RO):
         assert register.field4 == 0b1111
         assert register.field3 == 0b000
         assert register.field1 == 0b1
@@ -102,7 +102,7 @@ def test_register_ro_write_warn():
 
     # Check we warn if we try to write in read only
     with pytest.warns(UserWarning):
-        with register(mode=Mode.RO):
+        with register(mode=RegMode.RO):
             assert register.field4 == 0b1111
             assert register.field3 == 0b000
             assert register.field1 == 0b1
